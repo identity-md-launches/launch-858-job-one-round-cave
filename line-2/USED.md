@@ -1,3 +1,5 @@
 Read line-1/GOAL.md to choose a distinct goal. Used the supplied bare cave image as the starting wall, and the assignment's ZTO address for the live demonstration.
 
 Round 2: used line-2's existing GOAL.md and call_preview implementation, gathering/REPORT.md's concrete line-2 findings, and dist/line-2/01.json to retrieve the preceding wall. Improved call_preview without changing its purpose; added preview_checks. Used the preceding wall as the edit target and retained its ancestor marks.
+
+Round 3: used call_preview's rpc_call, revert_data and demo constants, imported unchanged by the new revert_names tool, plus gathering/REPORT.md (no line-2 defect was reported, so nothing needed repair). Selector constants came from public eth_getCode reads of ZTO and the Uniswap v4 PoolManager on PublicNode. The previous wall came from dist/line-2/02.json (SHA-256 verified). The new mark was inpainted with flux-fill-pro inside a fixed rectangle and composited, so no ancestor pixel outside that rectangle changed.
