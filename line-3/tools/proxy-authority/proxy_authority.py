@@ -39,13 +39,25 @@ def rpc_result(body):
     if not isinstance(body, dict) or body.get('jsonrpc') != '2.0':
         raise ValueError('Malformed JSON-RPC response envelope')
     request_id = body.get('id')
-    if isinstance(request_id, bool) or request_id != 1:
+    if type(request_id) is not int or request_id != 1:
         raise ValueError('Mismatched JSON-RPC response id')
     if 'error' in body:
         raise ValueError('RPC error: ' + json.dumps(body['error']))
     if 'result' not in body:
         raise ValueError('JSON-RPC response has no result')
     return body['result']
+
+
+def block_ref(block):
+    """Validate a block object's number and hash before pinning reads to it."""
+    if not isinstance(block, dict):
+        raise ValueError('Malformed block object')
+    number, block_hash = block.get('number'), block.get('hash')
+    if not isinstance(number, str) or not re.fullmatch(r'0x(?:0|[1-9a-fA-F][0-9a-fA-F]*)', number):
+        raise ValueError('Malformed block number')
+    if not isinstance(block_hash, str) or not re.fullmatch(r'0x[0-9a-fA-F]{64}', block_hash):
+        raise ValueError('Malformed block hash')
+    return number, block_hash.lower()
 
 
 def rpc(endpoint, method, params):
@@ -98,8 +110,7 @@ def assess(admin, beacon, beacon_implementation, owner):
 def inspect(endpoint, address):
     if int(rpc(endpoint, 'eth_chainId', []), 16) != 1:
         raise ValueError('Expected Ethereum mainnet chainId 1')
-    block_info = rpc(endpoint, 'eth_getBlockByNumber', ['latest', False])
-    block = block_info['number']
+    block, block_hash = block_ref(rpc(endpoint, 'eth_getBlockByNumber', ['latest', False]))
     slots = {name: rpc(endpoint, 'eth_getStorageAt', [address, slot, block])
              for name, slot in SLOTS.items()}
     admin, beacon = address_word(slots['admin']), address_word(slots['beacon'])
@@ -118,11 +129,11 @@ def inspect(endpoint, address):
         result.update(assess(admin, beacon, implementation['address'], owner['address']))
     else:
         result.update(assess(admin, None, None, None))
-    end = rpc(endpoint, 'eth_getBlockByNumber', [block, False])
-    if end.get('hash') != block_info.get('hash'):
+    end_block, end_hash = block_ref(rpc(endpoint, 'eth_getBlockByNumber', [block, False]))
+    if end_block != block or end_hash != block_hash:
         raise ValueError('Block changed during read; retry')
     return {'chain_id': 1, 'address': address, 'block_number': int(block, 16),
-            'block_hash': block_info['hash'], 'raw_slots': slots, **result}
+            'block_hash': block_hash, 'raw_slots': slots, **result}
 
 
 def self_test():
@@ -143,6 +154,7 @@ def self_test():
     assert beacon['beacon_implementation'] == address
     assert rpc_result({'jsonrpc': '2.0', 'id': 1, 'result': 'ok'}) == 'ok'
     for response in [{}, {'jsonrpc': '2.0', 'id': True, 'result': 'ok'},
+                     {'jsonrpc': '2.0', 'id': 1.0, 'result': 'ok'},
                      {'jsonrpc': '2.0', 'id': 2, 'result': 'ok'},
                      {'jsonrpc': '2.0', 'id': 1}]:
         try:
@@ -151,7 +163,18 @@ def self_test():
             pass
         else:
             raise AssertionError('Invalid RPC envelope accepted')
-    print('PASS: EIP-1967 admin/beacon, beacon authority, address words, strict envelopes')
+    good_hash = '0x' + 'ab' * 32
+    assert block_ref({'number': '0x1a', 'hash': good_hash}) == ('0x1a', good_hash)
+    for bad_block in [None, {'number': '0x1a'}, {'number': 26, 'hash': good_hash},
+                      {'number': '0x01a', 'hash': good_hash},
+                      {'number': '0x1a', 'hash': '0x' + 'ab' * 31}]:
+        try:
+            block_ref(bad_block)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError('Invalid block accepted')
+    print('PASS: EIP-1967 admin/beacon, beacon authority, address words, strict envelopes, block shape')
 
 
 def main():

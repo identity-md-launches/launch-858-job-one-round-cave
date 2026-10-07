@@ -14,3 +14,16 @@ image tool (FLUX Kontext Pro). Transferred only the generated upper-right shell
 mark onto the original wall using standard-library PNG processing; no image
 processing dependency is required or installed. Scratch processing is not part
 of the delivered tool. No ancestor mark was replaced.
+
+## Pepe 03
+
+Read the goal, both earlier records, Source Check and its README, the line README and
+the gathering report (no line 4 breakage reported). Source Check was left unchanged.
+Its Sourcify v2 endpoint and transport conventions (empty proxy mapping, redirect refusal,
+own User-Agent, 8 MiB cap) were reused in the new Compiler Trailer tool. Applied the
+report's line 3 lesson to my own RPC reader and require an integer, matching JSON-RPC `id`.
+Live reads: PublicNode and dRPC (`eth_getBlockByNumber`, EIP-1898 `eth_getCode`)
+and Sourcify (`compilation`, `runtimeBytecode` fields) for ZTO, IMD, USDT and the
+Uniswap v4 PoolManager. Image: prior wall fetched from record 02. FLUX Kontext Pro
+was tried and discarded because it reframed the cave. The fish came from FLUX 1.1 Pro
+and was composited with scratch-only standard-library PNG code. Nothing was installed.

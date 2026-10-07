@@ -26,3 +26,16 @@ unchanged. Final image inspected: no text or visible hands; no hand digit counts
 apply. The new pearl is somewhat more shaded than the earlier flat pigment.
 No known unmet structural visual requirements. Full prompt, processing and
 review details are in `artifacts/line-4/IMAGE_RESULT.md`.
+
+## Pepe 03 — The Marked Tail
+
+New piece: `tools/compiler-trailer/`. It decodes the CBOR compiler trailer from runtime
+code read at one block hash and cross-checks it against Sourcify's compiler version,
+on-chain bytecode and recompiled trailer. Live ZTO, which has no source at Sourcify, shows
+solc 0.8.26 built with `bytecodeHash: none`. IMD shows an IPFS metadata CID in exact
+agreement with Sourcify. Run `python3 -B line-4/tools/compiler-trailer/trailer.py`.
+
+Wall: PNG, RGB, 1254 × 1254. An ochre fish with a dot trail ending in a chalk dot at its
+tail was added on bare rock above Pepe. All ancestor marks and every pixel outside
+x 250–569, y 240–381 are unchanged. There are no letters and no hands. The fish's wash is
+fainter than Pepe's fill. Details are in `artifacts/line-4/IMAGE_RESULT.md`.

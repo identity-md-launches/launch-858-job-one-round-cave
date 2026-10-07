@@ -22,13 +22,25 @@ def rpc_result(body):
     if not isinstance(body, dict) or body.get('jsonrpc') != '2.0':
         raise ValueError('Malformed JSON-RPC response envelope')
     request_id = body.get('id')
-    if isinstance(request_id, bool) or request_id != 1:
+    if type(request_id) is not int or request_id != 1:
         raise ValueError('Mismatched JSON-RPC response id')
     if 'error' in body:
         raise ValueError('RPC error: ' + json.dumps(body['error']))
     if 'result' not in body:
         raise ValueError('JSON-RPC response has no result')
     return body['result']
+
+
+def block_ref(block):
+    """Validate a block object's number and hash before pinning reads to it."""
+    if not isinstance(block, dict):
+        raise ValueError('Malformed block object')
+    number, block_hash = block.get('number'), block.get('hash')
+    if not isinstance(number, str) or not re.fullmatch(r'0x(?:0|[1-9a-fA-F][0-9a-fA-F]*)', number):
+        raise ValueError('Malformed block number')
+    if not isinstance(block_hash, str) or not re.fullmatch(r'0x[0-9a-fA-F]{64}', block_hash):
+        raise ValueError('Malformed block hash')
+    return number, block_hash.lower()
 
 
 def rpc(endpoint, method, params):
@@ -80,8 +92,7 @@ def inspect(endpoint, address):
     chain = rpc(endpoint, 'eth_chainId', [])
     if int(chain, 16) != 1:
         raise ValueError('Expected Ethereum mainnet chainId 1')
-    block = rpc(endpoint, 'eth_getBlockByNumber', ['latest', False])
-    number = block['number']
+    number, block_hash = block_ref(rpc(endpoint, 'eth_getBlockByNumber', ['latest', False]))
     code = rpc(endpoint, 'eth_getCode', [address, number])
     slots = {key: rpc(endpoint, 'eth_getStorageAt', [address, slot, number])
              for key, slot in SLOTS.items()}
@@ -89,11 +100,11 @@ def inspect(endpoint, address):
     targets = {key: {'address': target, 'code_bytes': len(hex_bytes(
         rpc(endpoint, 'eth_getCode', [target, number])))}
         for key, target in result['routes'].items() if target}
-    end = rpc(endpoint, 'eth_getBlockByNumber', [number, False])
-    if end['hash'] != block['hash']:
+    end_number, end_hash = block_ref(rpc(endpoint, 'eth_getBlockByNumber', [number, False]))
+    if end_number != number or end_hash != block_hash:
         raise ValueError('Block changed during read; retry')
     return {'chain_id': 1, 'address': address, 'block_number': int(number, 16),
-            'block_hash': block['hash'], 'raw_slots': slots, **result, 'targets': targets}
+            'block_hash': block_hash, 'raw_slots': slots, **result, 'targets': targets}
 
 
 def self_test():
@@ -116,6 +127,7 @@ def self_test():
     for bad_response in [
             {}, {'jsonrpc': '1.0', 'id': 1, 'result': 'ok'},
             {'jsonrpc': '2.0', 'id': True, 'result': 'ok'},
+            {'jsonrpc': '2.0', 'id': 1.0, 'result': 'ok'},
             {'jsonrpc': '2.0', 'id': 2, 'result': 'ok'},
             {'jsonrpc': '2.0', 'id': 1},
     ]:
@@ -125,7 +137,18 @@ def self_test():
             pass
         else:
             raise AssertionError('Invalid RPC envelope accepted')
-    print('PASS: routes, malformed slots, strict JSON-RPC envelope')
+    good_hash = '0x' + 'ab' * 32
+    assert block_ref({'number': '0x1a', 'hash': good_hash}) == ('0x1a', good_hash)
+    for bad_block in [None, {'number': '0x1a'}, {'number': 26, 'hash': good_hash},
+                      {'number': '0x01a', 'hash': good_hash}, {'number': '0x', 'hash': good_hash},
+                      {'number': '0x1a', 'hash': '0x' + 'ab' * 31}]:
+        try:
+            block_ref(bad_block)
+        except ValueError:
+            pass
+        else:
+            raise AssertionError('Invalid block accepted')
+    print('PASS: routes, malformed slots, strict JSON-RPC envelope and block shape')
 
 
 def main():
