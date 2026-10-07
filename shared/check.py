@@ -13,7 +13,8 @@ def check():
         def read(self, *args): return b'{"id":true,"result":"0x"}'
     class Opener:
         def open(self, *args, **kwargs): return Response()
-    with patch.object(urllib.request, 'build_opener', return_value=Opener()):
+    with patch.object(urllib.request, 'build_opener', return_value=Opener()), \
+         patch.object(p.proxy_route, 'DIRECT_OPENER', Opener()):
         for function, args in [(p.call_preview.rpc_call, ('https://example.invalid', {}, 'latest')),
                                (p.proxy_route.rpc, ('https://example.invalid', 'eth_chainId', []))]:
             try:

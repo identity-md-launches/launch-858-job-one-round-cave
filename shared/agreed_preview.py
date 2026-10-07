@@ -1,11 +1,14 @@
 """Preview a ZTO call at a height agreed by two public Ethereum providers."""
 import argparse
 import json
-from tools import rpc_agreement as agreement, rpc_health, call_preview
+from tools import rpc_agreement as agreement, rpc_health, call_preview, revert_names
 
 
 def preview(endpoints, address=call_preview.ZTO, data='0x18160ddd', result_type='uint256'):
-    if len(set(endpoints)) < 2 or any(not url.startswith('https://') for url in endpoints):
+    if isinstance(endpoints, (str, bytes)):
+        raise ValueError('require endpoint collection')
+    endpoints = list(endpoints)
+    if any(not isinstance(url, str) or not url.startswith('https://') for url in endpoints) or len(set(endpoints)) < 2:
         raise ValueError('require at least two distinct HTTPS endpoints')
     address = call_preview.address(address)
     data = call_preview.calldata(data)
@@ -31,6 +34,8 @@ def preview(endpoints, address=call_preview.ZTO, data='0x18160ddd', result_type=
         raw = call_preview.revert_data(error)
         result.update(status='reverted' if raw or 'revert' in error['message'].lower() else 'rpc_error',
                       error=error, decoded=call_preview.explain_revert(raw))
+        if result['status'] == 'reverted' and raw:
+            result['named_revert'] = revert_names.name_revert(raw, revert_names.build_index())
     else:
         result.update(status='succeeded', return_data=response['result'])
         try:

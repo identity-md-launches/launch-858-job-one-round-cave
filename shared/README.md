@@ -69,3 +69,28 @@ address validation, no proxy discovery, and source redirect rejection.
 Existing shared Proxy Route retains its strict integer-ID guard. All original
 line folders remain untouched. These are source copies, with no dependencies
 or downloads required for the offline commands.
+
+## Gathering round 3 additions
+
+Refreshed modules and new `revert_names`, `delegate_scan`, `proxy_authority`,
+`compiler_trailer` copies use only Python's standard library. `provenance.json`
+records original paths and hashes; agreement/revert imports are package-local.
+Line 2 can reuse line 3's opcode scanner for proxy context; line 4 can use it on
+retrieved bytecode. Compiler metadata is review context, not a safety proof;
+known limitations are in gathering/REPORT.md.
+
+Agreement-gated preview now adds `preview.named_revert`: all catalog matches,
+decoded arguments when complete, explicit decode failures when truncated, and
+empty matches for unknown selectors. It retains raw error data. Provider
+collections can be generators. Run from the workspace root:
+
+```sh
+python3 -B shared/check_named.py
+```
+
+Complete ZTO errors, truncated data, unknown selectors, generators and pinned
+calls passed offline. Existing check.py/check_agreed.py and copied self-tests
+passed too. Live ZTO transfer preview at 26136821 named InsufficientBalance,
+zero sender, balance 0, needed 1; both provider block rechecks matched. Supply
+preview returned 10^27 at 26136820. Hash collisions prevent proving error origin.
+Nothing was signed or submitted; no installation is needed.

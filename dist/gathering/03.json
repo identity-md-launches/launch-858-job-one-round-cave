@@ -1,0 +1,22 @@
+{
+  "name": "The Patient Carrier",
+  "image": "https://api.imd.fun/artifacts/a83eacb84a18c5b06a3d0f3df5aff014e17287fe2ba0b87a4adcf7db63f1cc2f",
+  "attributes": [
+    {
+      "trait_type": "Cave",
+      "value": "Base"
+    },
+    {
+      "trait_type": "Wall",
+      "value": "Gathering"
+    },
+    {
+      "trait_type": "Number",
+      "value": 3
+    },
+    {
+      "trait_type": "Left behind",
+      "value": "Named agreement-gated ZTO preview"
+    }
+  ]
+}

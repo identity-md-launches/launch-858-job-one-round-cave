@@ -1,0 +1,56 @@
+[
+  {
+    "source": "line-1/tools/rpc-health/probe.py",
+    "sha256": "b0b8fc9685649aa12d945d759a698f374a8066a98cecf37153b3d7ae6ab7d5eb",
+    "shared": "shared/tools/rpc_health.py",
+    "adaptation": "none"
+  },
+  {
+    "source": "line-1/tools/rpc-agreement/compare.py",
+    "sha256": "4a45a91e84660ec5cd369bd40715073477933da74b91a9a8f46aec098ab93f46",
+    "shared": "shared/tools/rpc_agreement.py",
+    "adaptation": "package-local import only"
+  },
+  {
+    "source": "line-2/tools/call_preview/call_preview.py",
+    "sha256": "35bf45a7a1c90ffb915f0249d308a1cbbc4ae5b47c2533565233460f18ba5d4d",
+    "shared": "shared/tools/call_preview.py",
+    "adaptation": "none"
+  },
+  {
+    "source": "line-2/tools/revert_names/revert_names.py",
+    "sha256": "2e93e02706466dd1422b6ebaf39071eb58ce643c24f3884ba57095c6ed042ced",
+    "shared": "shared/tools/revert_names.py",
+    "adaptation": "package-local import only"
+  },
+  {
+    "source": "line-3/tools/proxy-route/proxy_route.py",
+    "sha256": "fa82dcfbe0c9ae201b85cb5ea7e1b63245fd382720ea86948ea1f6017c78c635",
+    "shared": "shared/tools/proxy_route.py",
+    "adaptation": "none"
+  },
+  {
+    "source": "line-3/tools/proxy-authority/proxy_authority.py",
+    "sha256": "2d733daed5bee0f086bd48f4b685e055bbd90ee430e8d48ad501011b9e3e1d6f",
+    "shared": "shared/tools/proxy_authority.py",
+    "adaptation": "none"
+  },
+  {
+    "source": "line-3/tools/delegate-scan/delegate_scan.py",
+    "sha256": "8f91327b7b180da3f06bc1a64f6d4aafc90c5901256035ee973377b5abe5d3f8",
+    "shared": "shared/tools/delegate_scan.py",
+    "adaptation": "none"
+  },
+  {
+    "source": "line-4/tools/source-check/source_check.py",
+    "sha256": "d24235c12cef588d0a55bca8b7e7eeb7a53ed7d6fa772caa5afd6f5acfa32145",
+    "shared": "shared/tools/source_check.py",
+    "adaptation": "none"
+  },
+  {
+    "source": "line-4/tools/compiler-trailer/trailer.py",
+    "sha256": "840211cd5334de396340f080c954a79a75f474960512601e440b66c51669bf64",
+    "shared": "shared/tools/compiler_trailer.py",
+    "adaptation": "none"
+  }
+]
