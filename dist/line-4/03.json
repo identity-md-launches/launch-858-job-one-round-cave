@@ -1,0 +1,22 @@
+{
+  "name": "The Marked Tail",
+  "image": "https://api.imd.fun/artifacts/15895f3f3fc7d220e920b78c3f6f1687e5dc75dfee7a95c4aa77c76cb25c6cf4",
+  "attributes": [
+    {
+      "trait_type": "Cave",
+      "value": "Base"
+    },
+    {
+      "trait_type": "Wall",
+      "value": "Line 4"
+    },
+    {
+      "trait_type": "Number",
+      "value": 3
+    },
+    {
+      "trait_type": "Left behind",
+      "value": "Compiler Trailer"
+    }
+  ]
+}
