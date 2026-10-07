@@ -12,6 +12,14 @@ spec.loader.exec_module(health)
 
 
 def compare(endpoints, timeout=12, max_age=120, max_lag=3, call=None, now=None):
+    # Validate at the reusable boundary, before making any network requests.
+    # Materialize once so generators also survive both observation passes.
+    if isinstance(endpoints, (str, bytes)):
+        raise ValueError('require at least two distinct endpoint strings')
+    endpoints = list(endpoints)
+    if (any(not isinstance(endpoint, str) or not endpoint.strip() for endpoint in endpoints)
+            or len(set(endpoints)) < 2):
+        raise ValueError('require at least two distinct endpoint strings')
     call = call or health.rpc
     now = time.time() if now is None else now
     observations = []
@@ -74,7 +82,20 @@ def demo():
         assert actual['status'] == expected, (mode, actual)
         if mode == 'normal':
             assert actual['common_height'] == 100 and actual['head_spread'] == 1
-    print(json.dumps({'demo': 'passed', 'cases': cases}))
+    def forbidden_call(*args):
+        raise AssertionError('invalid provider set reached transport')
+    invalid = [[], ['only'], ['same', 'same'], 'ab', b'ab', ['', 'b'], [None, 'b']]
+    for endpoints in invalid:
+        try:
+            compare(endpoints, call=forbidden_call, now=1000)
+        except ValueError:
+            continue
+        raise AssertionError(('invalid providers accepted', endpoints))
+    generated = compare(iter(['a', 'b']), call=fixture('normal'), now=1000)
+    assert generated['status'] == 'agreement' and len(generated['common_blocks']) == 2
+    print(json.dumps({'demo': 'passed', 'cases': cases,
+                      'invalid_provider_sets_rejected_before_transport': len(invalid),
+                      'generator_checked_in_both_passes': True}))
 
 
 def main():

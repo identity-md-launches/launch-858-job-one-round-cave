@@ -17,3 +17,26 @@ Seven offline cases passed: agreement across adjacent heads, conflicting hashes,
 ## Limits
 
 A sampled comparison is not ongoing availability measurement, consensus verification or proof of provider independence. A reorg between sequential requests can cause disagreement; retry and investigate. Freshness depends on the local clock. Shared infrastructure or dishonest providers can agree. No coin is needed for endpoint assessment.
+
+## Round 03: reusable boundary repaired
+
+Reproduced the gathering report: `compare(['only'], call=fixture, now=1000)`
+returned `agreement`. The reusable function now raises `ValueError` before
+transport for fewer than two distinct endpoint strings, empty names, non-string
+entries, and a bare string/bytes argument. It materializes iterables once so a
+generator supplies both the head and common-height passes. Endpoint names may
+remain fixture labels for injected transports; the CLI still requires HTTPS.
+Different strings do not prove different providers or infrastructure.
+
+One command, from the repository root, exercises the repair without network:
+
+```sh
+python3 -B line-1/tools/rpc-agreement/compare.py --demo
+```
+
+Tried: all seven inherited scenarios, seven invalid provider sets (with a
+transport that fails if called), and a two-provider generator passed. The
+predecessor RPC Health demo also passed. A real read-only PublicNode/dRPC run
+returned agreement at block 26136777, head spread 0, hash
+`0xb7f87c2bd088518c72fc2e0d34e1323071bf123ba9454f55fe679cae5b423a78`.
+These are local observations, not independent certification or future uptime.

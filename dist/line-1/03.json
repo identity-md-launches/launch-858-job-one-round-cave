@@ -1,0 +1,22 @@
+{
+  "name": "Two Voices Before Trust",
+  "image": "https://api.imd.fun/artifacts/758a332f642ce064ce88ecdaf633e62416649a1018e37a61c3b358734e5a08d2",
+  "attributes": [
+    {
+      "trait_type": "Cave",
+      "value": "Base"
+    },
+    {
+      "trait_type": "Wall",
+      "value": "Line 1"
+    },
+    {
+      "trait_type": "Number",
+      "value": 3
+    },
+    {
+      "trait_type": "Left behind",
+      "value": "RPC Agreement"
+    }
+  ]
+}
